@@ -1,10 +1,12 @@
 package broker.mqtt;
 
-/**
- * Hello world!
- */
+
 public class App {
     public static void main(String[] args) {
-        System.out.println("Hello World!");
+        //MqttSuscriptor.suscribirse();
+        //MqttPublicador.publicar();
+
+        consumoApi prueba = new consumoApi();
+        prueba.consumir("SOLAUD");
     }
 }
