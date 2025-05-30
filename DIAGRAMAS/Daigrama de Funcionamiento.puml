@@ -2,6 +2,7 @@
 title Diagrama de Funcionamiento del Sistema
 
 !theme mars
+skinparam backgroundColor #FFFFFF
 
 ' === Layout vertical ===
 top to bottom direction

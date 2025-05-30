@@ -2,7 +2,7 @@
 title Secuencia: Monitor recibe precio y actualiza display e indicadores
 
 !theme mars
-
+skinparam backgroundColor #FFFFFF
 
 participant "Dispositivo Monitor" as Monitor
 participant "Broker MQTT"         as Broker

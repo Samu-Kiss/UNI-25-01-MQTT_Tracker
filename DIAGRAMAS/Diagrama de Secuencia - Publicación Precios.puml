@@ -2,6 +2,7 @@
 title Secuencia: SensorMonedas publica precios de criptomonedas
 
 !theme mars
+skinparam backgroundColor #FFFFFF
 
 participant "SensorMonedas"    as SM
 participant "Binance REST API" as API

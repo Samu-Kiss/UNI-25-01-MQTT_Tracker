@@ -2,6 +2,7 @@
 title Secuencia: Configurador envía configuración al Dispositivo Monitor
 
 !theme mars
+skinparam backgroundColor #FFFFFF
 
 participant "Aplicación Configurador" as Config
 participant "Broker MQTT"             as Broker
