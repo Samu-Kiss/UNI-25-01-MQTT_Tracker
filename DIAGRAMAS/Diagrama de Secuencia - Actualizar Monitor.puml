@@ -1,0 +1,33 @@
+@startuml Secuencia_Actualizacion_Monitor
+title Secuencia: Monitor recibe precio y actualiza display e indicadores
+
+!theme mars
+
+
+participant "Dispositivo Monitor" as Monitor
+participant "Broker MQTT"         as Broker
+
+Monitor -> Broker: CONNECT (MQTT TCP/1883)
+Monitor -> Broker: SUBSCRIBE "crypto/bitcoin"
+Monitor -> Broker: SUBSCRIBE "crypto/solana"
+Monitor -> Broker: SUBSCRIBE "config/monitor01"
+
+Broker -> Monitor: PUBLISH on "crypto/bitcoin": 56000.23
+note right of Monitor
+  Precio anterior: 55500.00
+end note
+
+alt Precio sube
+  Monitor -> Monitor: LED verde ON
+else Precio baja
+  Monitor -> Monitor: LED rojo ON
+else Sin cambio
+  Monitor -> Monitor: LED blanco ON
+end
+
+Monitor -> Monitor: Actualizar pantalla con 56000.23
+
+alt Precio ≥ thresholdBTC
+  Monitor -> Monitor: Activar buzzer durante 5000 ms
+end
+@enduml

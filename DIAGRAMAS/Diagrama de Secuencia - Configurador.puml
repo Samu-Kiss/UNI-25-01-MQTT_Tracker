@@ -1,0 +1,15 @@
+@startuml Secuencia_Configuracion_Remota
+title Secuencia: Configurador envía configuración al Dispositivo Monitor
+
+!theme mars
+
+participant "Aplicación Configurador" as Config
+participant "Broker MQTT"             as Broker
+participant "Dispositivo Monitor"     as Monitor
+
+Config -> Broker : CONNECT (MQTT TCP/1883)
+Config -> Broker : PUBLISH topic "config/monitor01"\n{\n  button1: "BTC",\n  button2: "SOL",\n  thresholdBTC: 60000,\n  alarmDuration: 5000\n}
+
+Broker -> Monitor: PUBLISH topic "config/monitor01"\npayload {…}
+Monitor --> Monitor: Actualizar configuración interna
+@enduml
