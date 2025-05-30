@@ -1,7 +1,8 @@
+//If you want to use this file, duplicate it and rename it to config.h and fill in the values. Please don't commit your config.h file to the repository.
 #pragma once
 
 // WiFi configuration
-#define WIFI_SSID "TU_SSID"
+#define WIFI_SSID "YOUR_WIFI_SSID"
 #define WIFI_PASSWORD "TU_PASSWORD"
 
 // MQTT configuration
