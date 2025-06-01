@@ -12,7 +12,7 @@ public class SensorMonedas {
             @Override
             public void run() {
                 for(String moneda : monedas){
-                    String precio = ConsumoApi.obtenerPrecio(moneda);
+                    String precio = ConsumoApi.obtenerPrecio(moneda).split(":")[1].trim();
                     String nombre = moneda.replace("USDT", "").toLowerCase();
                     String topic = "crypto/" + nombre;
                     MqttPublicador.publicar(topic,precio);
