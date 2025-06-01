@@ -1,0 +1,17 @@
+@startuml Secuencia_Publicacion_Precios
+title Secuencia: SensorMonedas publica precios de criptomonedas
+
+!theme mars
+skinparam backgroundColor #FFFFFF
+
+participant "SensorMonedas"    as SM
+participant "Binance REST API" as API
+participant "Broker MQTT"      as Broker
+
+SM -> API   : GET /api/v3/ticker/price?symbol=BTCUSDT
+API --> SM  : HTTP 200 { "symbol":"BTCUSDT", "price":56000.23 }
+
+SM -> Broker: CONNECT (MQTT TCP/1883)
+SM -> Broker: PUBLISH topic "crypto/bitcoin"\npayload 56000.23
+SM -> Broker: PUBLISH topic "crypto/solana"\npayload 180.45
+@enduml

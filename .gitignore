@@ -1,2 +1,6 @@
 
 BROKER/.idea/
+
+ESP32/.idea/
+
+ESP32/src/config.h

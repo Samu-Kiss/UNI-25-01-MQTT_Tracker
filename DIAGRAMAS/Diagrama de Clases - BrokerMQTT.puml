@@ -1,0 +1,32 @@
+@startuml Diagrama_Clases_BrokerMQTT
+skinparam linetype ortho
+
+!theme mars
+skinparam backgroundColor #FFFFFF
+
+package "brokerMQTT" {
+  class App {
+    + main(String[]): void
+  }
+  class ConsumoApi {
+    + obtenerPrecio(String): String
+  }
+  class MqttPublicador {
+    + publicar(String, String): void
+  }
+  class MqttSuscriptor {
+    + suscribirse(String): void
+  }
+  class SensorMonedas {
+    + iniciar(): void
+  }
+}
+
+' Relaciones
+App --> MqttPublicador
+App --> MqttSuscriptor
+App --> SensorMonedas
+App --> ConsumoApi
+SensorMonedas --> MqttPublicador
+MqttSuscriptor --> ConsumoApi
+@enduml

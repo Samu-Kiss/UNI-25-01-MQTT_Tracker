@@ -1,0 +1,45 @@
+@startuml Diagrama_Funcionamiento
+title Diagrama de Funcionamiento del Sistema
+
+!theme mars
+skinparam backgroundColor #FFFFFF
+
+' === Layout vertical ===
+top to bottom direction
+
+' --- Red Local ---
+package "Red Local" {
+  component "Aplicación\nConfigurador"       as Config
+  component "Dispositivo Monitor\n(ESP32)"   as Monitor
+  component "Router Wi-Fi / AP"              as Router
+}
+
+' --- JaverRED ---
+package "JaverRED" {
+  component "Switch\nEthernet"               as Switch
+  component "SensorMonedas\n(en VM)"         as Sensor
+}
+
+' --- Internet ---
+package "Internet" {
+  component "Broker MQTT\n(privado)"         as Broker
+  component "API REST\nBinance"              as Binance
+}
+
+' === Conexiones inalámbricas ===
+Config ..> Router : IEEE 802.11 b/g/n  
+Monitor ..> Router : IEEE 802.11 b/g/n  
+
+' === Backbone Ethernet ===
+Router --> Switch : Ethernet/IP  
+Switch --> Sensor : Ethernet/IP  
+
+' === Flujo MQTT ===
+Config  --> Broker : MQTT (TCP/1883)  
+Monitor --> Broker : MQTT (TCP/1883)  
+Sensor  --> Broker : MQTT (TCP/1883)  
+
+' === Llamada a API externa ===
+Sensor --> Binance : HTTPS (TCP/443)
+
+@enduml
