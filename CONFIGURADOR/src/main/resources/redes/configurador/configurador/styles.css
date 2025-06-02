@@ -1,0 +1,108 @@
+/* Estilos generales */
+.root {
+    -fx-font-family: 'Segoe UI', Arial, sans-serif;
+    -fx-background-color: #f5f5f5;
+    -fx-font-size: 14px;
+}
+
+/* Caja de conexión MQTT */
+.mqtt-connect-box {
+    -fx-background-color: #e9ecef;
+    -fx-padding: 10px;
+    -fx-background-radius: 5px;
+}
+
+/* Títulos de secciones */
+.section-title {
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #343a40;
+    -fx-padding: 5px 0;
+}
+
+/* Botones */
+.button {
+    -fx-background-color: #007bff;
+    -fx-text-fill: white;
+    -fx-cursor: hand;
+    -fx-padding: 8px 15px;
+    -fx-background-radius: 4px;
+}
+
+.button:hover {
+    -fx-background-color: #0069d9;
+}
+
+.start-button {
+    -fx-background-color: #28a745;
+    -fx-min-width: 150px;
+}
+
+.start-button:hover {
+    -fx-background-color: #218838;
+}
+
+.stop-button {
+    -fx-background-color: #dc3545;
+    -fx-min-width: 150px;
+}
+
+.stop-button:hover {
+    -fx-background-color: #c82333;
+}
+
+/* Tablas */
+.table-view {
+    -fx-background-color: white;
+    -fx-background-radius: 5px;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.1), 5, 0, 0, 1);
+}
+
+.table-view .column-header {
+    -fx-background-color: #343a40;
+    -fx-text-fill: white;
+}
+
+.table-view .column-header .label {
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+}
+
+.table-row-cell:selected {
+    -fx-background-color: #007bff;
+}
+
+.table-row-cell:selected .text {
+    -fx-fill: white;
+}
+
+/* Campo de texto */
+.text-field {
+    -fx-background-radius: 4px;
+    -fx-border-radius: 4px;
+    -fx-border-color: #ced4da;
+    -fx-padding: 8px;
+}
+
+.text-field:focused {
+    -fx-border-color: #80bdff;
+    -fx-effect: dropshadow(gaussian, rgba(0, 123, 255, 0.25), 5, 0, 0, 0);
+}
+
+/* Etiqueta de estado */
+.status-label {
+    -fx-font-weight: bold;
+    -fx-text-fill: #6c757d;
+}
+
+/* Contenido principal */
+.main-content {
+    -fx-background-color: white;
+    -fx-background-radius: 5px;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.1), 5, 0, 0, 1);
+}
+
+/* Separador */
+.separator {
+    -fx-padding: 5px 0;
+}
