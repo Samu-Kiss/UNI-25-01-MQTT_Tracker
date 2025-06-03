@@ -97,10 +97,12 @@ public class SensorMonedas {
                             color = ANSI_GREEN;
                             flecha = "↑";
                             estado = "SUBIÓ";
+                            NotificadorTelegram.enviarMensaje("\uD83D\uDE80 La criptomoneda " + nombre + " subió: $" + precioStr);
                         } else if (precioActual < precioAnterior) {
                             color = ANSI_RED;
                             flecha = "↓";
                             estado = "BAJÓ";
+                            NotificadorTelegram.enviarMensaje("⚠️ La criptomoneda " + nombre + " bajó: $" + precioStr);
                         } else {
                             color = ANSI_YELLOW;
                             flecha = "→";
