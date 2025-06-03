@@ -1,0 +1,42 @@
+@startuml Control de ESP32
+!theme mars
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+skinparam backgroundColor #FFFFFF
+
+participant "Usuario" as user
+participant "ConfiguradorController" as controller
+participant "MQTTService" as mqtt
+participant "ESP32" as esp32
+
+== Iniciando ESP32 ==
+user -> controller : onIniciarESP32ButtonClick()
+activate controller
+alt mqtt conectado
+    controller -> mqtt : iniciarESP32()
+    mqtt -> esp32 : publish("esp32/comandos", "start")
+    controller -> controller : estadoLabel.setText("ESP32 iniciado")
+end
+deactivate controller
+
+== Deteniendo ESP32 ==
+user -> controller : onDetenerESP32ButtonClick()
+activate controller
+alt mqtt conectado
+    controller -> mqtt : detenerESP32()
+    mqtt -> esp32 : publish("esp32/comandos", "stop")
+    controller -> controller : estadoLabel.setText("ESP32 detenido")
+end
+deactivate controller
+
+== Actualizando Criptomonedas en ESP32 ==
+controller -> controller : actualizarCriptomonedasESP32()
+activate controller
+alt mqtt conectado
+    controller -> mqtt : actualizarCriptomonedas(criptomonedasActivas)
+    mqtt -> mqtt : construir mensaje JSON
+    mqtt -> esp32 : publish("esp32/criptomonedas", jsonMessage)
+    controller -> controller : estadoLabel.setText("Criptomonedas actualizadas")
+end
+deactivate controller
+@enduml
+

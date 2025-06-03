@@ -1,0 +1,52 @@
+@startuml Gestión de Criptomonedas
+!theme mars
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+skinparam SequenceMessageAlign first
+skinparam backgroundColor #FFFFFF
+
+participant "Usuario" as user
+participant "ConfiguradorController" as controller
+participant "MQTTService" as mqtt
+participant "Criptomoneda" as crypto
+
+== Agregar Criptomoneda ==
+user -> controller : onAgregarButtonClick()
+activate controller
+controller -> controller : validar entradas
+alt validación exitosa
+    controller -> crypto : new Criptomoneda(simbolo, nombre)
+    controller -> controller : criptomonedas.add(crypto)
+else validación fallida
+    controller -> controller : mostrarAlerta("Error", mensaje, ERROR)
+end
+deactivate controller
+
+== Agregar a Criptomonedas Activas ==
+user -> controller : onAgregarActivasButtonClick()
+activate controller
+controller -> controller : obtener criptomoneda seleccionada
+alt selección válida
+    controller -> controller : criptomonedasActivas.add(seleccionada)
+    controller -> controller : actualizarCriptomonedasESP32()
+    controller -> mqtt : actualizarCriptomonedas(criptomonedasActivas)
+    mqtt --> controller : return
+else selección inválida
+    controller -> controller : mostrarAlerta("Error", mensaje, ERROR)
+end
+deactivate controller
+
+== Eliminar de Criptomonedas Activas ==
+user -> controller : onQuitarActivasButtonClick()
+activate controller
+controller -> controller : obtener criptomoneda seleccionada
+alt selección válida
+    controller -> controller : criptomonedasActivas.remove(seleccionada)
+    controller -> controller : actualizarCriptomonedasESP32()
+    controller -> mqtt : actualizarCriptomonedas(criptomonedasActivas)
+    mqtt --> controller : return
+else selección inválida
+    controller -> controller : mostrarAlerta("Error", mensaje, ERROR)
+end
+deactivate controller
+@enduml
+

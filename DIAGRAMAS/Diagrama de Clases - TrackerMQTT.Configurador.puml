@@ -1,0 +1,32 @@
+@startuml Diagrama_Clases_BrokerMQTT
+
+!theme mars
+skinparam linetype ortho
+skinparam backgroundColor #FFFFFF
+skinparam nodesep 80
+skinparam ranksep 100
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+
+package "broker" {
+class Broker {
+  + Broker():
+  + main(String[]): void
+}
+class ConsumoApi {
+  + ConsumoApi():
+  + obtenerPrecio(String): String
+}
+class MqttPublicador {
+  + MqttPublicador():
+  + publicar(String, String): void
+}
+class SensorMonedas {
+  + SensorMonedas():
+  + iniciar(): void
+}
+
+Broker              -[#595959,dashed]->  SensorMonedas         : "«use»"
+SensorMonedas       -[#595959,dashed]->  ConsumoApi            : "«use»"
+SensorMonedas       -[#595959,dashed]->  MqttPublicador        : "«use»"
+@enduml
+

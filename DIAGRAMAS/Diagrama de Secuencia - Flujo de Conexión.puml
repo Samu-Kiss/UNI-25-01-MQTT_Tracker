@@ -1,0 +1,47 @@
+@startuml Flujo de Conexión
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+skinparam SequenceMessageAlign first
+!theme mars
+skinparam backgroundColor #FFFFFF
+
+
+participant "Usuario" as user
+participant "ConfiguradorController" as controller
+participant "MQTTService" as mqtt
+participant "Broker MQTT" as broker
+
+
+user -> controller : onConectarButtonClick()
+activate controller
+
+alt ya conectado
+    controller -> mqtt : disconnect()
+    mqtt -> broker : disconnect()
+    mqtt --> controller : return
+    controller -> controller : actualizarEstadoBotones(false)
+    controller -> controller : conectarButton.setText("Conectar")
+else no conectado
+    controller -> controller : inicializar mqttService
+    controller -> mqtt : new MQTTService(brokerUrl, clientId)
+    activate mqtt
+    controller -> mqtt : addMessageListener()
+    controller -> mqtt : connect()
+    mqtt -> broker : connect()
+
+    alt conexión exitosa
+        broker --> mqtt : conectado
+        mqtt --> controller : true
+        controller -> controller : conectarButton.setText("Desconectar")
+        controller -> controller : actualizarEstadoBotones(true)
+        controller -> controller : agregarMensaje("Conectado al broker MQTT")
+    else conexión fallida
+        broker --> mqtt : excepción
+        mqtt --> controller : false
+        controller -> controller : mostrarAlerta("Error", "No se pudo conectar", ERROR)
+    end
+    deactivate mqtt
+end
+
+deactivate controller
+@enduml
+

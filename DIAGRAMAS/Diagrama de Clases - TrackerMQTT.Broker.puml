@@ -1,27 +1,12 @@
 @startuml Diagrama_Clases_BrokerMQTT
-skinparam linetype ortho
 
 !theme mars
+skinparam linetype ortho
 skinparam backgroundColor #FFFFFF
-
-package "broker" {
-class Broker {
-  + Broker():
-  + main(String[]): void
-}
-class ConsumoApi {
-  + ConsumoApi():
-  + obtenerPrecio(String): String
-}
-class MqttPublicador {
-  + MqttPublicador():
-  + publicar(String, String): void
-}
-class SensorMonedas {
-  + SensorMonedas():
-  + iniciar(): void
-}
-}
+skinparam nodesep 80
+skinparam ranksep 100
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+LAYOUT_LANDSCAPE()
 
 package configurador{
 class ConfiguradorApplication {
@@ -74,4 +59,7 @@ ConfiguradorController   -[#595959,dashed]->  Criptomoneda            : "«creat
 ConfiguradorController  "1" *-[#595959,plain]-> "criptomonedas\n*" Criptomoneda
 ConfiguradorController   -[#595959,dashed]->  MQTTService             : "«create»"
 ConfiguradorController  "1" *-[#595959,plain]-> "mqttService\n1" MQTTService
+ConfiguradorApplication  -[#595959,dashed]->  ConfiguradorController  : "«use»"
+MQTTService         -[#595959,dashed]->  Criptomoneda          : "«use»"
 @enduml
+

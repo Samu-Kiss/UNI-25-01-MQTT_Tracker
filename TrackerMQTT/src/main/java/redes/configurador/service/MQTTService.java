@@ -250,8 +250,6 @@ public class MQTTService {
     /**
      * Método para iniciar o detener el ESP32.
      * Envía un comando "start" al ESP32.
-     *
-     * @param iniciar true para iniciar, false para detener.
      */
     public void iniciarESP32() {
         enviarComando("start");

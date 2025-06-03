@@ -1,0 +1,38 @@
+@startuml Broker y SensorMonedas
+!theme mars
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+skinparam SequenceMessageAlign first
+skinparam backgroundColor #FFFFFF
+
+participant "Broker" as broker
+participant "SensorMonedas" as sensor
+participant "MqttClient" as mqtt
+participant "ConsumoApi" as api
+participant "MqttPublicador" as pub
+
+broker -> sensor : iniciar()
+activate sensor
+
+sensor -> sensor : inicializar criptomonedas por defecto
+sensor -> mqtt : new MqttClient(broker, clientId)
+sensor -> mqtt : connect()
+sensor -> mqtt : subscribe("esp32/criptomonedas")
+
+mqtt -> sensor : callback de mensaje
+
+activate mqtt
+loop cada 10 segundos
+    loop para cada criptomoneda
+        sensor -> api : obtenerPrecio(moneda)
+        api --> sensor : precio
+        sensor -> sensor : calcular cambio de precio
+        sensor -> pub : publicar("crypto/"+nombre, precio)
+        pub -> mqtt : publicar mensaje
+        sensor -> sensor : mostrar estado en consola
+    end
+end
+deactivate mqtt
+
+deactivate sensor
+@enduml
+
