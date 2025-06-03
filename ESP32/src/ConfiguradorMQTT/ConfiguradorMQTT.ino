@@ -9,7 +9,6 @@ String monedaSeleccionada = "SOL";   // Por defecto mostrar SOL
 int ultimoValorPot = 0;
 String precioMoneda_1 = "";
 String precioMoneda_2 = "";
-bool estadoAnteriorBtn = false;
 float precioMoneda_1Anterior = 0.0;
 float precioMoneda_2Anterior = 0.0;
 const float UMBRAL_CAMBIO = 0.0001;  // Umbral para detectar cambios significativos
@@ -43,7 +42,6 @@ const int LCD_D7       = 17;  // D7            (naranja)
 
 // Interacción menú
 const int POT_MENU     = 34;  // Potenciómetro (rosa)
-const int PULS_MENU    = 35;  // Pulsador      (azul)
 
 const int BUZZER_PIN = 23; // Morado
 
@@ -68,7 +66,6 @@ void setup() {
 
   // Menú
   pinMode(POT_MENU,   INPUT);
-  pinMode(PULS_MENU,  INPUT);
 
   pinMode(BUZZER_PIN, OUTPUT);
 
@@ -147,45 +144,6 @@ void loop() {
       }
     }
   }
-
-  // También permitir cambiar con el botón para compatibilidad
-  bool estadoActualBtn = digitalRead(PULS_MENU) == HIGH;
-
-  if (!estadoAnteriorBtn && estadoActualBtn) {
-    // Buscar la posición actual de la moneda seleccionada
-    int monedaActualIndex = -1;
-    for (int i = 0; i < 10; i++) {
-      if (simbolosCriptos[i] == monedaSeleccionada) {
-        monedaActualIndex = i;
-        break;
-      }
-    }
-
-    // Encontrar la siguiente moneda válida
-    bool monedaEncontrada = false;
-    for (int i = 1; i <= 10; i++) {
-      int nextIndex = (monedaActualIndex + i) % 10;
-      if (simbolosCriptos[nextIndex] != "") {
-        monedaSeleccionada = simbolosCriptos[nextIndex];
-        monedaEncontrada = true;
-        break;
-      }
-    }
-
-    // Si no hay más monedas, volver a la primera
-    if (!monedaEncontrada && simbolosCriptos[0] != "") {
-      monedaSeleccionada = simbolosCriptos[0];
-    }
-
-    // Sonar para confirmar el cambio
-    tone(BUZZER_PIN, 1000, 100);
-
-    // Actualizar LCD inmediatamente
-    actualizarLCD();
-  }
-
-  // Guardar estado del botón para próxima iteración
-  estadoAnteriorBtn = estadoActualBtn;
 
   // Actualizar LCD periódicamente con la información actual
   static unsigned long lastLcdUpdate = 0;
