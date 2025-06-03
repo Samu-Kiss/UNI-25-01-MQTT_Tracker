@@ -1,4 +1,4 @@
-package redes.configurador.configurador;
+package redes.configurador;
 
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
@@ -8,8 +8,8 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
-import redes.configurador.configurador.model.Criptomoneda;
-import redes.configurador.configurador.service.MQTTService;
+import redes.configurador.model.Criptomoneda;
+import redes.configurador.service.MQTTService;
 
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -21,7 +21,8 @@ public class ConfiguradorController implements Initializable {
     @FXML
     private TextField nombreTextField;
 
-    private String mqttBrokerTextField = "broker.hivemq.com";
+    @FXML
+    private TextField mqttBrokerTextField;
 
     @FXML
     private Button conectarButton;
@@ -65,13 +66,22 @@ public class ConfiguradorController implements Initializable {
     @FXML
     private Label estadoLabel;
 
+    @FXML
+    private TextArea mensajesTextArea;
+
     private ObservableList<Criptomoneda> criptomonedas = FXCollections.observableArrayList();
     private ObservableList<Criptomoneda> criptomonedasActivas = FXCollections.observableArrayList();
 
     private MQTTService mqttService;
 
+    /**
+     * Inicializa el controlador y configura las tablas y botones.
+     * Establece el broker MQTT por defecto y configura las columnas de las tablas.
+     */
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+        // Establecer valor predeterminado para el broker MQTT
+        mqttBrokerTextField.setText("broker.hivemq.com");
         // Configurar tablas
         simboloColumn.setCellValueFactory(cellData -> cellData.getValue().simboloProperty());
         nombreColumn.setCellValueFactory(cellData -> cellData.getValue().nombreProperty());
@@ -108,10 +118,37 @@ public class ConfiguradorController implements Initializable {
         criptomonedasTable.setItems(criptomonedas);
         criptomonedasActivasTable.setItems(criptomonedasActivas);
 
+        // Agregar criptomonedas por defecto
+        inicializarCriptomonedasPorDefecto();
+
         // Deshabilitar botones hasta que se conecte al broker
         actualizarEstadoBotones(false);
     }
 
+    /**
+     * Inicializa las criptomonedas disponibles por defecto.
+     * Agrega Bitcoin (BTC) y Solana (SOL) con valores críticos predefinidos.
+     */
+    private void inicializarCriptomonedasPorDefecto() {
+        // Agregar criptomonedas disponibles por defecto
+        Criptomoneda btc = new Criptomoneda("BTC", "Bitcoin");
+        Criptomoneda sol = new Criptomoneda("SOL", "Solana");
+
+        criptomonedas.add(btc);
+        criptomonedas.add(sol);
+
+        // Agregar a monedas activas con valores críticos por defecto
+        btc.setValorCritico(50000.0);  // Valor crítico BTC: $50,000
+        sol.setValorCritico(150.0);    // Valor crítico SOL: $150
+
+        criptomonedasActivas.add(btc);
+        criptomonedasActivas.add(sol);
+    }
+
+    /**
+     * Maneja el evento de clic en el botón "Conectar".
+     * Conecta o desconecta del broker MQTT según el estado actual.
+     */
     @FXML
     private void onConectarButtonClick() {
         if (mqttService != null && mqttService.isConnected()) {
@@ -122,22 +159,31 @@ public class ConfiguradorController implements Initializable {
             return;
         }
 
-        String brokerUrl = mqttBrokerTextField.trim();
+        String brokerUrl = mqttBrokerTextField.getText().trim();
         if (brokerUrl.isEmpty()) {
             mostrarAlerta("Error", "Ingrese la dirección del broker MQTT", Alert.AlertType.ERROR);
             return;
         }
 
         mqttService = new MQTTService(brokerUrl, "ConfiguradorESP32_" + System.currentTimeMillis());
+
+        // Configurar el listener para recibir mensajes del ESP32
+        mqttService.addMessageListener(this::agregarMensaje);
+
         if (mqttService.connect()) {
             conectarButton.setText("Desconectar");
             estadoLabel.setText("Conectado a " + brokerUrl);
             actualizarEstadoBotones(true);
+            agregarMensaje("Conectado al broker MQTT: " + brokerUrl);
         } else {
             mostrarAlerta("Error", "No se pudo conectar al broker MQTT", Alert.AlertType.ERROR);
         }
     }
 
+    /**
+     * Maneja el evento de clic en el botón "Agregar".
+     * Agrega una nueva criptomoneda a la lista de criptomonedas disponibles.
+     */
     @FXML
     private void onAgregarButtonClick() {
         String simbolo = simboloTextField.getText().trim().toUpperCase();
@@ -161,6 +207,10 @@ public class ConfiguradorController implements Initializable {
         nombreTextField.clear();
     }
 
+    /**
+     * Maneja el evento de clic en el botón "Agregar a activas".
+     * Agrega la criptomoneda seleccionada a la lista de criptomonedas activas.
+     */
     @FXML
     private void onAgregarActivasButtonClick() {
         Criptomoneda seleccionada = criptomonedasTable.getSelectionModel().getSelectedItem();
@@ -181,6 +231,10 @@ public class ConfiguradorController implements Initializable {
         actualizarCriptomonedasESP32();
     }
 
+    /**
+     * Maneja el evento de clic en el botón "Quitar de activas".
+     * Quita la criptomoneda seleccionada de la lista de criptomonedas activas.
+     */
     @FXML
     private void onQuitarActivasButtonClick() {
         Criptomoneda seleccionada = criptomonedasActivasTable.getSelectionModel().getSelectedItem();
@@ -193,6 +247,10 @@ public class ConfiguradorController implements Initializable {
         actualizarCriptomonedasESP32();
     }
 
+    /**
+     * Maneja el evento de clic en el botón "Iniciar ESP32".
+     * Envía un mensaje al ESP32 para iniciar la monitorización de criptomonedas.
+     */
     @FXML
     private void onIniciarESP32ButtonClick() {
         if (mqttService != null && mqttService.isConnected()) {
@@ -201,6 +259,10 @@ public class ConfiguradorController implements Initializable {
         }
     }
 
+    /**
+     * Maneja el evento de clic en el botón "Detener ESP32".
+     * Envía un mensaje al ESP32 para detener la monitorización de criptomonedas.
+     */
     @FXML
     private void onDetenerESP32ButtonClick() {
         if (mqttService != null && mqttService.isConnected()) {
@@ -209,6 +271,10 @@ public class ConfiguradorController implements Initializable {
         }
     }
 
+    /**
+     * Actualiza la lista de criptomonedas en el ESP32.
+     * Publica un mensaje con las criptomonedas activas y sus valores críticos.
+     */
     private void actualizarCriptomonedasESP32() {
         if (mqttService != null && mqttService.isConnected()) {
             mqttService.actualizarCriptomonedas(criptomonedasActivas);
@@ -216,6 +282,12 @@ public class ConfiguradorController implements Initializable {
         }
     }
 
+    /**
+     * Actualiza el estado de los botones según si está conectado al broker MQTT.
+     * Deshabilita o habilita los botones según el estado de conexión.
+     *
+     * @param conectado true si está conectado, false si no lo está.
+     */
     private void actualizarEstadoBotones(boolean conectado) {
         agregarButton.setDisable(!conectado);
         agregarActivasButton.setDisable(!conectado);
@@ -224,11 +296,37 @@ public class ConfiguradorController implements Initializable {
         detenerESP32Button.setDisable(!conectado);
     }
 
+    /**
+     * Muestra una alerta con el título, mensaje y tipo especificado.
+     *
+     * @param titulo El título de la alerta.
+     * @param mensaje El mensaje de la alerta.
+     * @param tipo El tipo de alerta (ERROR, INFORMATION, CONFIRMATION, etc.).
+     */
     private void mostrarAlerta(String titulo, String mensaje, Alert.AlertType tipo) {
         Alert alert = new Alert(tipo);
         alert.setTitle(titulo);
         alert.setHeaderText(null);
         alert.setContentText(mensaje);
         alert.showAndWait();
+    }
+
+    /**
+     * Agrega un mensaje al área de texto de mensajes.
+     * Asegura que la actualización se realice en el hilo de JavaFX.
+     *
+     * @param mensaje El mensaje a agregar.
+     */
+    private void agregarMensaje(String mensaje) {
+        // Asegurarse de que la actualización de la UI se haga en el hilo de JavaFX
+        javafx.application.Platform.runLater(() -> {
+            if (mensajesTextArea.getText().isEmpty()) {
+                mensajesTextArea.setText(mensaje);
+            } else {
+                mensajesTextArea.appendText("\n" + mensaje);
+            }
+            // Hacer scroll al final para mostrar el mensaje más reciente
+            mensajesTextArea.setScrollTop(Double.MAX_VALUE);
+        });
     }
 }

@@ -4,29 +4,74 @@ skinparam linetype ortho
 !theme mars
 skinparam backgroundColor #FFFFFF
 
-package "brokerMQTT" {
-  class App {
-    + main(String[]): void
-  }
-  class ConsumoApi {
-    + obtenerPrecio(String): String
-  }
-  class MqttPublicador {
-    + publicar(String, String): void
-  }
-  class MqttSuscriptor {
-    + suscribirse(String): void
-  }
-  class SensorMonedas {
-    + iniciar(): void
-  }
+package "broker" {
+class Broker {
+  + Broker():
+  + main(String[]): void
+}
+class ConsumoApi {
+  + ConsumoApi():
+  + obtenerPrecio(String): String
+}
+class MqttPublicador {
+  + MqttPublicador():
+  + publicar(String, String): void
+}
+class SensorMonedas {
+  + SensorMonedas():
+  + iniciar(): void
+}
 }
 
-' Relaciones
-App --> MqttPublicador
-App --> MqttSuscriptor
-App --> SensorMonedas
-App --> ConsumoApi
-SensorMonedas --> MqttPublicador
-MqttSuscriptor --> ConsumoApi
+package configurador{
+class ConfiguradorApplication {
+  + ConfiguradorApplication():
+  + start(Stage): void
+  + main(String[]): void
+}
+class ConfiguradorController {
+  + ConfiguradorController():
+  - onIniciarESP32ButtonClick(): void
+  - actualizarCriptomonedasESP32(): void
+  - onQuitarActivasButtonClick(): void
+  - actualizarEstadoBotones(boolean): void
+  - mostrarAlerta(String, String, AlertType): void
+  + initialize(URL, ResourceBundle): void
+  - inicializarCriptomonedasPorDefecto(): void
+  - agregarMensaje(String): void
+  - onAgregarActivasButtonClick(): void
+  - onDetenerESP32ButtonClick(): void
+  - onConectarButtonClick(): void
+  - onAgregarButtonClick(): void
+}
+class Criptomoneda {
+  + Criptomoneda(String, String):
+  + simboloProperty(): StringProperty
+  + toString(): String
+  + nombreProperty(): StringProperty
+  + valorCriticoProperty(): DoubleProperty
+   valorCritico: double
+   simbolo: String
+   nombre: String
+}
+class MQTTService {
+  + MQTTService(String, String):
+  + unsubscribeFromTopic(String): void
+  + detenerESP32(): void
+  + disconnect(): void
+  + iniciarESP32(): void
+  + connect(): boolean
+  + subscribeToTopic(String): void
+  + enviarComando(String): void
+  + addMessageListener(Consumer<String>): void
+  - notifyListeners(String, String): void
+  + actualizarCriptomonedas(List<Criptomoneda>): void
+  + removeMessageListener(Consumer<String>): void
+   connected: boolean
+}
+}
+ConfiguradorController   -[#595959,dashed]->  Criptomoneda            : "«create»"
+ConfiguradorController  "1" *-[#595959,plain]-> "criptomonedas\n*" Criptomoneda
+ConfiguradorController   -[#595959,dashed]->  MQTTService             : "«create»"
+ConfiguradorController  "1" *-[#595959,plain]-> "mqttService\n1" MQTTService
 @enduml

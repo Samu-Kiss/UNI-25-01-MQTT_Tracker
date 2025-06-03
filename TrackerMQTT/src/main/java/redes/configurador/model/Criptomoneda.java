@@ -1,4 +1,4 @@
-package redes.configurador.configurador.model;
+package redes.configurador.model;
 
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;

@@ -4,13 +4,18 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<BorderPane xmlns:fx="http://javafx.com/fxml" fx:controller="redes.configurador.configurador.ConfiguradorController">
+<BorderPane xmlns:fx="http://javafx.com/fxml" fx:controller="redes.configurador.ConfiguradorController">
     <padding>
         <Insets bottom="20.0" left="20.0" right="20.0" top="20.0"/>
     </padding>
 
     <top>
         <VBox spacing="10.0">
+            <HBox spacing="10.0" alignment="CENTER_LEFT">
+                <Label text="Broker MQTT:" />
+                <TextField fx:id="mqttBrokerTextField" promptText="broker.hivemq.com" HBox.hgrow="ALWAYS" />
+                <Button fx:id="conectarButton" text="Conectar" onAction="#onConectarButtonClick" />
+            </HBox>
             <HBox spacing="10.0" alignment="CENTER_LEFT">
                 <Label text="Símbolo:" />
                 <TextField fx:id="simboloTextField" promptText="BTC" />
@@ -59,6 +64,9 @@
                 <Label text="Estado: " />
                 <Label fx:id="estadoLabel" text="Desconectado" styleClass="status-label" />
             </HBox>
+            <Separator />
+            <Label text="Mensajes recibidos del ESP32:" styleClass="section-title" />
+            <TextArea fx:id="mensajesTextArea" editable="false" wrapText="true" prefHeight="100.0" VBox.vgrow="ALWAYS" />
         </VBox>
     </bottom>
 </BorderPane>

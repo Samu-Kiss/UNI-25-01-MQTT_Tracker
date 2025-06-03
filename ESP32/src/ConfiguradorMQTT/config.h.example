@@ -5,4 +5,4 @@
 #define WIFI_PASSWORD "TU_PASSWORD"
 // MQTT configuration
 #define MQTT_BROKER_ADRRESS "broker.hivemq.com"
-#define MQTT_BROKER_PORT 1883   
+#define MQTT_BROKER_PORT 1883
