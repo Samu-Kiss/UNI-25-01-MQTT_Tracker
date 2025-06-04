@@ -15,7 +15,6 @@ const int LCD_D7       = 17;  // D7            (naranja)
 
 // Interacción menú
 const int POT_MENU     = 34;  // Potenciómetro (rosa)
-const int PULS_MENU    = 35;  // Pulsador      (azul)
 
 const int BUZZER_PIN = 23; // Morado
 
@@ -32,7 +31,6 @@ void setup() {
 
   // Menú
   pinMode(POT_MENU,   INPUT);
-  pinMode(PULS_MENU,  INPUT);
 
   pinMode(BUZZER_PIN, OUTPUT);
 
@@ -56,10 +54,6 @@ void loop() {
 
   // 2) Lectura de potenciómetro y botón
   int valorPot = analogRead(POT_MENU);      // 0–4095 en ESP32
-  bool boton  = digitalRead(PULS_MENU);     // HIGH cuando se pulsa
-
-  Serial.printf("Pot=%d  Btn=%s\n", valorPot,
-                boton ? "ON" : "OFF");
 
   // 3) Mostrar en LCD
   lcd.clear();
@@ -68,14 +62,8 @@ void loop() {
   lcd.print(map(valorPot, 0, 4095, 0, 100));
   lcd.print("%");
 
-  lcd.setCursor(0, 1);
-  lcd.print("Btn: ");
-  lcd.print(boton ? "ON" : "OFF");
-
   // 4) Buzzer en la pulsación
-  if (boton) {
-    tone(BUZZER_PIN, 1000, 100);  // 1 kHz, 100 ms
-  }
-
+  int frecuencia = map(valorPot, 0, 4095, 200, 2000); // Mapea el potenciómetro a frecuencia
+  tone(BUZZER_PIN, frecuencia, 100);  // Frecuencia variable, 100 ms
   delay(500);
 }
